@@ -1,13 +1,14 @@
+package com.org.staffmanagement.controller;
 
-package com.university.universitystaffmanagement.controller;
+import com.org.staffmanagement.models.Staff;
+import com.org.staffmanagement.service.StaffService;
 
-import com.university.universitystaffmanagement.models.Staff;
-import com.university.universitystaffmanagement.service.StaffService;
-
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/staff")
@@ -20,16 +21,26 @@ public class StaffController {
         this.staffService = staffService;
     }
 
-    // Get all staff
+    // Get all staff by organisation
     @GetMapping
-    public List<Staff> getAllStaff() {
+    public List<Staff> getAllStaff(
+            @RequestParam(required = false) String organizationType,
+            @RequestParam(required = false) String organisationId) {
+
+        if (organisationId != null && !organisationId.isBlank()) {
+            return staffService.getStaffByOrganisationId(organisationId);
+        }
+
+        if (organizationType != null && !organizationType.isBlank()) {
+            return staffService.getStaffByOrganisationType(organizationType);
+        }
+
         return staffService.getAllStaff();
     }
 
     // Get staff by ID
     @GetMapping("/{id}")
-    public ResponseEntity<Staff> getStaffById(
-            @PathVariable String id) {
+    public ResponseEntity<Staff> getStaffById(@PathVariable String id) {
 
         return staffService.getStaffById(id)
                 .map(ResponseEntity::ok)
@@ -55,8 +66,7 @@ public class StaffController {
 
     // Delete staff
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteStaff(
-            @PathVariable String id) {
+    public ResponseEntity<Void> deleteStaff(@PathVariable String id) {
 
         if (staffService.getStaffById(id).isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -65,5 +75,15 @@ public class StaffController {
         staffService.deleteStaff(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    // Handle duplicate employee codes
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, String>> handleDuplicateEmployeeCode(
+            IllegalArgumentException exception) {
+
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(Map.of("error", exception.getMessage()));
     }
 }
