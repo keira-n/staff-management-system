@@ -12,6 +12,8 @@ public class StaffContext {
     @Id
     private String id;
 
+    private String organisationId;
+
     private String key;
     private String name;
     private String description;
@@ -79,6 +81,14 @@ public class StaffContext {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public String getOrganisationId() {
+        return organisationId;
+    }
+
+    public void setOrganisationId(String organisationId) {
+        this.organisationId = organisationId;
     }
 
     public String getKey() {

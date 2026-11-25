@@ -5,12 +5,16 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "organisations")
 public class Organisation {
+
     @Id
     private String id;
 
     private String name;
     private String type;
     private String description;
+
+    private String databaseName;
+    private String databaseStatus = "PROVISIONING";
 
     public Organisation() {
     }
@@ -51,5 +55,21 @@ public class Organisation {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getDatabaseStatus() {
+        return databaseStatus;
+    }
+
+    public void setDatabaseStatus(String databaseStatus) {
+        this.databaseStatus = databaseStatus;
     }
 }

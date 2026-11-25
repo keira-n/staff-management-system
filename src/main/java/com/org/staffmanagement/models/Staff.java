@@ -1,4 +1,3 @@
-
 package com.org.staffmanagement.models;
 
 import org.springframework.data.annotation.Id;
@@ -12,7 +11,6 @@ public class Staff {
 
     @Id
     private String id;
-
     // Personal Information
     private String name;
     private String email;

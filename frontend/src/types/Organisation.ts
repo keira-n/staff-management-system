@@ -3,4 +3,6 @@ export interface Organisation {
     name: string;
     type: string;
     description?: string;
+    databaseName?: string;
+    databaseStatus?: 'PROVISIONING' | 'ACTIVE' | 'FAILED';
 }

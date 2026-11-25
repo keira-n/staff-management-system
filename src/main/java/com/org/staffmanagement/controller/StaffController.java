@@ -12,7 +12,6 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/staff")
-@CrossOrigin(origins = "*")
 public class StaffController {
 
     private final StaffService staffService;
@@ -21,16 +20,14 @@ public class StaffController {
         this.staffService = staffService;
     }
 
-    // Get all staff by organisation
+    // Get staff belonging to the authenticated organisation
     @GetMapping
     public List<Staff> getAllStaff(
             @RequestParam(required = false) String organizationType,
             @RequestParam(required = false) String organisationId) {
 
-        if (organisationId != null && !organisationId.isBlank()) {
-            return staffService.getStaffByOrganisationId(organisationId);
-        }
-
+        // Organisation ownership is determined by the authenticated user.
+        // Client-supplied organisationId is never trusted.
         if (organizationType != null && !organizationType.isBlank()) {
             return staffService.getStaffByOrganisationType(organizationType);
         }
@@ -38,7 +35,7 @@ public class StaffController {
         return staffService.getAllStaff();
     }
 
-    // Get staff by ID
+    // Get staff by ID within the authenticated organisation
     @GetMapping("/{id}")
     public ResponseEntity<Staff> getStaffById(@PathVariable String id) {
 
@@ -47,13 +44,18 @@ public class StaffController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Add staff
+    // Add staff to the authenticated organisation
     @PostMapping
-    public Staff addStaff(@RequestBody Staff staff) {
-        return staffService.addStaff(staff);
+    public ResponseEntity<Staff> addStaff(@RequestBody Staff staff) {
+
+        Staff savedStaff = staffService.addStaff(staff);
+
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(savedStaff);
     }
 
-    // Update staff
+    // Update staff belonging to the authenticated organisation
     @PutMapping("/{id}")
     public ResponseEntity<Staff> updateStaff(
             @PathVariable String id,
@@ -64,7 +66,7 @@ public class StaffController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
-    // Delete staff
+    // Delete staff belonging to the authenticated organisation
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteStaff(@PathVariable String id) {
 
@@ -79,7 +81,7 @@ public class StaffController {
 
     // Handle duplicate employee codes
     @ExceptionHandler(IllegalArgumentException.class)
-    public ResponseEntity<Map<String, String>> handleDuplicateEmployeeCode(
+    public ResponseEntity<Map<String, String>> handleIllegalArgument(
             IllegalArgumentException exception) {
 
         return ResponseEntity

@@ -1,28 +1,42 @@
 import type { Staff } from '../types/Staff';
+import { getToken } from './authService';
 
 const API_URL = 'http://localhost:8080/api/staff';
 
+function getHeaders(json = false): HeadersInit {
+    const token = getToken();
+
+    return {
+        ...(json ? { 'Content-Type': 'application/json' } : {}),
+        ...(token ? { Authorization: `Bearer ${token}` } : {})
+    };
+}
+
+async function handleError(response: Response, fallback: string): Promise<never> {
+    const message = await response.text();
+
+    throw new Error(message || fallback);
+}
+
 export async function getAllStaff(
     organisationType?: string,
-    organisationId?: string
+    _organisationId?: string
 ): Promise<Staff[]> {
     const params = new URLSearchParams();
 
     if (organisationType) {
-        params.append('organizationType', organisationType);
-    }
-
-    if (organisationId) {
-        params.append('organisationId', organisationId);
+        params.append('organisationType', organisationType);
     }
 
     const query = params.toString();
     const url = query ? `${API_URL}?${query}` : API_URL;
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+        headers: getHeaders()
+    });
 
     if (!response.ok) {
-        throw new Error('Failed to fetch staff');
+        await handleError(response, 'Failed to fetch staff.');
     }
 
     return response.json();
@@ -31,14 +45,12 @@ export async function getAllStaff(
 export async function addStaff(staff: Staff): Promise<Staff> {
     const response = await fetch(API_URL, {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: getHeaders(true),
         body: JSON.stringify(staff)
     });
 
     if (!response.ok) {
-        throw new Error('Failed to add staff');
+        await handleError(response, 'Failed to add staff.');
     }
 
     return response.json();
@@ -50,14 +62,12 @@ export async function updateStaff(
 ): Promise<Staff> {
     const response = await fetch(`${API_URL}/${id}`, {
         method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json'
-        },
+        headers: getHeaders(true),
         body: JSON.stringify(staff)
     });
 
     if (!response.ok) {
-        throw new Error('Failed to update staff');
+        await handleError(response, 'Failed to update staff.');
     }
 
     return response.json();
@@ -65,10 +75,11 @@ export async function updateStaff(
 
 export async function deleteStaff(id: string): Promise<void> {
     const response = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE'
+        method: 'DELETE',
+        headers: getHeaders()
     });
 
     if (!response.ok) {
-        throw new Error('Failed to delete staff');
+        await handleError(response, 'Failed to delete staff.');
     }
 }

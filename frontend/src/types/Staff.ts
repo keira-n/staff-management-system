@@ -3,11 +3,11 @@ export interface Staff {
     name: string;
     email: string;
     phone?: string;
-    organisationName?: string;
-    organisationType?: string;
-    organisationId?: string;
     employeeCode?: string;
     department?: string;
     position?: string;
+    organisationName?: string;
+    organisationType?: string;
+    organisationId?: string;
     customFields?: Record<string, unknown>;
 }
