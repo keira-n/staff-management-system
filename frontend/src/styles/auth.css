@@ -10,18 +10,18 @@
     width: 100%;
     max-width: 480px;
     padding: 35px;
-    background-color: #161b22;
-    border: 1px solid #3b434d;
+    background-color: #ffffff;
+    border: 1px solid #0DCAF0;
 }
 
 .auth-card h1,
 .auth-card h2 {
-    color: #60a5fa;
+    color: #6F42C1;
     margin-bottom: 12px;
 }
 
 .auth-card p {
-    color: #8b949e;
+    color: #6b7280;
 }
 
 .auth-card form {
@@ -38,7 +38,7 @@
 }
 
 .auth-card label {
-    color: #c9d1d9;
+    color: #1f2937;
     font-size: 14px;
 }
 
@@ -53,7 +53,7 @@
 
 .auth-card .auth-switch button {
     width: auto;
-    color: #58a6ff;
+    color: #007BFF;
 }
 
 .auth-card .error-message {
@@ -63,9 +63,85 @@
 .auth-organisation-id {
     padding: 15px;
     margin-top: 20px;
-    background-color: #0d1117;
-    border: 1px solid #3b434d;
+    background-color: #f8fafc;
+    border: 1px solid #0DCAF0;
     overflow-wrap: anywhere;
+}
+
+.auth-page {
+    width: 100%;
+    min-height: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.auth-page .container {
+    width: 100%;
+    max-width: 600px;
+    min-height: 100vh;
+    margin: 0 auto;
+    padding: 40px 25px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.auth-page header {
+    width: 100%;
+    margin-bottom: 25px;
+    text-align: center;
+}
+
+.auth-page header h1 {
+    color: #6F42C1;
+    margin-bottom: 10px;
+}
+
+.auth-page header p {
+    color: #6b7280;
+}
+
+.auth-page .form-section {
+    width: 100%;
+    margin: 0;
+    padding: 30px;
+}
+
+.auth-page .form-section form {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 15px;
+}
+
+.auth-page .form-section input,
+.auth-page .form-section select,
+.auth-page .form-section textarea {
+    width: 100%;
+    min-width: 0;
+}
+
+.auth-page .form-section .form-buttons {
+    display: flex;
+    gap: 12px;
+}
+
+.auth-page .form-section .form-buttons button {
+    flex: 1;
+}
+
+@media (max-width: 600px) {
+    .auth-page .container {
+        padding: 25px 16px;
+    }
+
+    .auth-page .form-section {
+        padding: 20px;
+    }
+
+    .auth-page .form-section .form-buttons {
+        flex-direction: column;
+    }
 }
 
 @media (max-width: 600px) {

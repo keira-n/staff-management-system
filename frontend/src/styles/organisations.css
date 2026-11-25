@@ -4,13 +4,13 @@
 .organisation-settings {
     padding: 25px;
     margin-bottom: 35px;
-    background-color: #161b22;
-    border: 1px solid #3b434d;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
 }
 
 .organisation-section h2,
 .organisation-settings h2 {
-    color: #60a5fa;
+    color: #6F42C1;
 }
 
 /* Organisation forms */
@@ -26,7 +26,7 @@
 .organisation-settings label {
     display: block;
     margin-bottom: 8px;
-    color: #c9d1d9;
+    color: #1f2937;
     font-size: 14px;
 }
 
@@ -35,17 +35,18 @@
 .organisation-card {
     padding: 20px;
     margin-bottom: 15px;
-    background-color: #0d1117;
-    border: 1px solid #3b434d;
+    background-color: #f8fafc;
+    border: 1px solid #e5e7eb;
 }
 
 .organisation-card h3 {
-    color: #60a5fa;
+    color: #6F42C1;
     margin-bottom: 10px;
 }
 
 .organisation-card p {
     font-size: 14px;
+    color: #4b5563;
     overflow-wrap: anywhere;
 }
 
@@ -54,23 +55,23 @@
 .database-status {
     display: inline-block;
     padding: 5px 10px;
-    border: 1px solid #3b434d;
+    border: 1px solid #d1d5db;
     font-size: 12px;
 }
 
 .database-status.active {
-    color: #3fb950;
-    border-color: #238636;
+    color: #198754;
+    border-color: #75c99a;
 }
 
 .database-status.provisioning {
-    color: #e3b341;
-    border-color: #9e6a03;
+    color: #9a6700;
+    border-color: #e5b341;
 }
 
 .database-status.failed {
-    color: #f85149;
-    border-color: #da3633;
+    color: #dc3545;
+    border-color: #e99aa2;
 }
 
 /* Responsive */

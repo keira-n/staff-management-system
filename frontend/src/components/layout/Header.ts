@@ -20,34 +20,44 @@ export function renderHeader(
     const isAdmin = user.role === 'ADMIN';
 
     container.innerHTML = `
-        <header>
-            <h1>Staff Management</h1>
+        <header class="dashboard-header">
+            <div class="header-content">
 
-            <p>${escapeHTML(user.organisationName)}</p>
+                <div class="header-brand">
+                    <h1>Staff Management</h1>
 
-            <p>
-                ${escapeHTML(user.email)}
-                — ${escapeHTML(user.role)}
-            </p>
+                    <div class="header-details">
+                        <p class="header-organisation">
+                            ${escapeHTML(user.organisationName)}
+                        </p>
 
-            <div class="form-buttons">
-                <button type="button" id="navigateStaff">
-                    Staff Members
-                </button>
+                        <p class="header-user">
+                            ${escapeHTML(user.email)}
+                            <span>— ${escapeHTML(user.role)}</span>
+                        </p>
+                    </div>
+                </div>
 
-                <button type="button" id="navigateLeave">
-                    Leave Management
-                </button>
-
-                ${isAdmin ? `
-                    <button type="button" id="navigateOrganisations">
-                        Organisation Settings
+                <nav class="header-navigation">
+                    <button type="button" id="navigateStaff">
+                        Staff Members
                     </button>
-                ` : ''}
 
-                <button type="button" id="headerLogout">
-                    Logout
-                </button>
+                    <button type="button" id="navigateLeave">
+                        Leave Management
+                    </button>
+
+                    ${isAdmin ? `
+                        <button type="button" id="navigateOrganisations">
+                            Organisation Settings
+                        </button>
+                    ` : ''}
+
+                    <button type="button" id="headerLogout">
+                        Logout
+                    </button>
+                </nav>
+
             </div>
         </header>
     `;

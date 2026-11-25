@@ -17,90 +17,92 @@ export function renderAuthPage(
         const registering = mode === 'register';
 
         app.innerHTML = `
-            <div class="container">
-                <header>
-                    <h1>Staff Management</h1>
-                    <p>
-                        ${registering
+            <div class="auth-page">
+                <div class="container">
+                    <header>
+                        <h1>Staff Management</h1>
+                        <p>
+                            ${registering
             ? 'Register your organisation to get started'
             : 'Sign in to your organisation'}
-                    </p>
-                </header>
+                        </p>
+                    </header>
 
-                <section class="form-section">
-                    <h2>
-                        ${registering
+                    <section class="form-section">
+                        <h2>
+                            ${registering
             ? 'Register Organisation'
             : 'Organisation Login'}
-                    </h2>
+                        </h2>
 
-                    <form id="authForm">
+                        <form id="authForm">
 
-                        ${registering ? `
+                            ${registering ? `
+                                <input
+                                    name="organisationName"
+                                    placeholder="Organisation Name"
+                                    required
+                                >
+
+                                <select name="organisationType" required>
+                                    <option value="">Select Organisation Type</option>
+                                    <option value="University">University</option>
+                                    <option value="Hospital">Hospital</option>
+                                    <option value="Company">Company</option>
+                                    <option value="School">School</option>
+                                    <option value="Other">Other</option>
+                                </select>
+
+                                <textarea
+                                    name="description"
+                                    placeholder="Organisation Description (optional)"
+                                    rows="3"
+                                ></textarea>
+                            ` : `
+                                <input
+                                    name="organisationId"
+                                    placeholder="Organisation ID"
+                                    required
+                                >
+
+                                <small>
+                                    Enter the Organisation ID provided during registration.
+                                </small>
+                            `}
+
                             <input
-                                name="organisationName"
-                                placeholder="Organisation Name"
+                                name="email"
+                                type="email"
+                                placeholder="Email Address"
                                 required
                             >
 
-                            <select name="organisationType" required>
-                                <option value="">Select Organisation Type</option>
-                                <option value="University">University</option>
-                                <option value="Hospital">Hospital</option>
-                                <option value="Company">Company</option>
-                                <option value="School">School</option>
-                                <option value="Other">Other</option>
-                            </select>
-
-                            <textarea
-                                name="description"
-                                placeholder="Organisation Description (optional)"
-                                rows="3"
-                            ></textarea>
-                        ` : `
                             <input
-                                name="organisationId"
-                                placeholder="Organisation ID"
+                                name="password"
+                                type="password"
+                                placeholder="Password"
+                                minlength="8"
                                 required
                             >
 
-                            <small>
-                                Enter the Organisation ID provided during registration.
-                            </small>
-                        `}
+                            <div class="form-buttons">
+                                <button type="submit">
+                                    ${registering ? 'Register Organisation' : 'Login'}
+                                </button>
 
-                        <input
-                            name="email"
-                            type="email"
-                            placeholder="Email Address"
-                            required
-                        >
-
-                        <input
-                            name="password"
-                            type="password"
-                            placeholder="Password"
-                            minlength="8"
-                            required
-                        >
-
-                        <div class="form-buttons">
-                            <button type="submit">
-                                ${registering ? 'Register Organisation' : 'Login'}
-                            </button>
-
-                            <button type="button" id="switchAuth">
-                                ${registering
+                                <button type="button" id="switchAuth">
+                                    ${registering
             ? 'Already registered? Login'
             : 'Register a New Organisation'}
-                            </button>
-                        </div>
+                                </button>
+                            </div>
 
-                    </form>
+                        </form>
 
-                    <p id="authError" style="color: #f87171;"></p>
-                    <div id="registrationResult"></div>
-                </section>
+                        <p id="authError" class="error-message"></p>
+                        <div id="registrationResult"></div>
+                    </section>
+                </div>
             </div>
         `;
 
@@ -110,7 +112,7 @@ export function renderAuthPage(
     function attachEvents(): void {
         document.querySelector('#switchAuth')
             ?.addEventListener('click', () => {
-                mode = mode === 'login' ? 'register' : 'login';
+                mode = mode === 'register' ? 'login' : 'register';
                 render();
             });
 

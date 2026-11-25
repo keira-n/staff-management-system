@@ -1,8 +1,12 @@
-.staff-section {
+.staff-section,
+.form-section,
+.staff-list-section {
+    width: 100%;
+    min-width: 0;
     padding: 25px;
     margin-bottom: 35px;
-    border: 1px solid #3b434d;
-    background-color: #161b22;
+    border: 1px solid #e5e7eb;
+    background-color: #ffffff;
 }
 
 .staff-list-heading {
@@ -13,23 +17,23 @@
     margin-bottom: 25px;
 }
 
-.staff-list-heading h1 {
-    color: #60a5fa;
-    margin-bottom: 10px;
+.staff-list-heading h1,
+.staff-list-heading h2 {
+    margin: 0;
+    color: #6F42C1;
 }
 
 .staff-list-heading p {
-    color: #8b949e;
     margin: 0;
+    color: #6b7280;
 }
 
-/* Staff form */
-
-.form-section {
-    padding: 25px;
-    margin-bottom: 35px;
-    border: 1px solid #3b434d;
-    background-color: #161b22;
+.staff-search {
+    width: 280px;
+    max-width: 100%;
+    min-width: 0;
+    height: 40px;
+    flex: 0 1 280px;
 }
 
 .form-section form {
@@ -38,89 +42,108 @@
     gap: 15px;
 }
 
-/* Staff filters */
-
-.staff-filters {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 15px;
-    margin-bottom: 25px;
+#staffForm textarea,
+#staffForm #staffFormError,
+#staffForm .form-buttons {
+    grid-column: 1 / -1;
 }
 
-/* Staff cards */
+#staffForm #staffFormError {
+    margin: 0;
+    color: #dc3545;
+    font-size: 14px;
+}
+
+.staff-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+    width: 100%;
+    align-items: stretch;
+}
 
 .staff-card {
     display: flex;
+    flex-direction: column;
     justify-content: space-between;
-    align-items: center;
+    align-items: stretch;
     gap: 20px;
-    padding: 20px 10px;
-    border-bottom: 1px solid #3b434d;
+    width: 100%;
+    min-width: 0;
+    padding: 20px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 0;
 }
 
-.staff-card:last-child {
-    border-bottom: none;
+.staff-card > div:first-child {
+    min-width: 0;
 }
 
 .staff-card h3 {
     margin: 0 0 10px;
-    color: #60a5fa;
+    color: #6F42C1;
     font-size: 20px;
+    overflow-wrap: anywhere;
 }
 
 .staff-card p {
     margin: 5px 0;
-    color: #c9d1d9;
+    color: #4b5563;
     font-size: 14px;
     overflow-wrap: anywhere;
 }
 
-/* Staff actions */
-
-.actions {
+.staff-card .actions {
     display: flex;
+    width: 100%;
     gap: 8px;
-    flex-shrink: 0;
+    margin-top: auto;
+}
+
+.staff-card .actions button {
+    flex: 1;
+    min-width: 0;
 }
 
 .edit-btn {
-    color: #58a6ff;
+    color: #007BFF;
 }
 
 .delete-btn {
-    color: #f85149;
+    color: #dc3545;
 }
 
 .delete-btn:hover {
-    background-color: #3d2025;
-    border-color: #f85149;
-    color: #f85149;
+    background-color: #fff1f2;
+    border-color: #dc3545;
+    color: #dc3545;
 }
 
-/* Responsive layout */
+@media (max-width: 768px) {
+    .staff-grid {
+        grid-template-columns: 1fr;
+    }
+}
 
 @media (max-width: 600px) {
     .staff-section,
-    .form-section {
+    .form-section,
+    .staff-list-section {
         padding: 18px;
     }
 
     .staff-list-heading {
-        align-items: flex-start;
+        align-items: stretch;
         flex-direction: column;
     }
 
-    .staff-filters,
+    .staff-search {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+
     .form-section form {
         grid-template-columns: 1fr;
-    }
-
-    .staff-card {
-        align-items: flex-start;
-        flex-direction: column;
-    }
-
-    .actions {
-        width: 100%;
     }
 }

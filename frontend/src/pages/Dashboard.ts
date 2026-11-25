@@ -42,11 +42,15 @@ export async function renderDashboardPage(
     const canReviewLeave = ['MANAGER', 'HR', 'ADMIN'].includes(userRole);
 
     app.innerHTML = `
-        <div id="dashboardHeader"></div>
+        <div class="dashboard-layout">
+            <div id="dashboardHeader"></div>
 
-        <main class="container">
-            <div id="dashboardContent"></div>
-        </main>
+            <main class="dashboard-main">
+                <div class="container">
+                    <div id="dashboardContent"></div>
+                </div>
+            </main>
+        </div>
     `;
 
     const headerContainer = app.querySelector<HTMLElement>(
