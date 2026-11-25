@@ -29,12 +29,32 @@ type ManagedStaff = Staff & {
 
 type DashboardPageType = 'staff' | 'organisations' | 'leave';
 
+const PAGE_ROUTES: Record<DashboardPageType, string> = {
+    staff: '/staff',
+    organisations: '/organisations',
+    leave: '/leave'
+};
+
+function getPageFromPath(): DashboardPageType {
+    switch (window.location.pathname) {
+        case '/organisations':
+            return 'organisations';
+
+        case '/leave':
+            return 'leave';
+
+        case '/staff':
+        default:
+            return 'staff';
+    }
+}
+
 export async function renderDashboardPage(
     app: HTMLElement
 ): Promise<void> {
     let staffList: ManagedStaff[] = [];
     let editingStaff: ManagedStaff | null = null;
-    let currentPage: DashboardPageType = 'staff';
+    let currentPage: DashboardPageType = getPageFromPath();
 
     const currentUser = getCurrentUser();
     const userRole = currentUser?.role?.toUpperCase() ?? 'USER';
@@ -63,14 +83,33 @@ export async function renderDashboardPage(
 
     renderHeader(headerContainer, {
         onNavigate: page => {
-            currentPage = page;
-            renderPage();
+            if (
+                page !== 'staff' &&
+                page !== 'organisations' &&
+                page !== 'leave'
+            ) {
+                return;
+            }
+
+            navigateToPage(page);
         },
         onLogout: () => {
             logout();
-            window.location.reload();
+            window.location.assign('/login');
         }
     });
+
+    function navigateToPage(page: DashboardPageType): void {
+        currentPage = page;
+
+        const route = PAGE_ROUTES[page];
+
+        if (window.location.pathname !== route) {
+            window.history.pushState({}, '', route);
+        }
+
+        void renderPage();
+    }
 
     async function loadStaff(): Promise<void> {
         contentContainer.innerHTML = `

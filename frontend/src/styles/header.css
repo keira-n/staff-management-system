@@ -73,9 +73,9 @@ header.dashboard-header {
 }
 
 .header-navigation button:hover {
-    background-color: #0DCAF0;
+    background-color: #e5f6ff;
     border-color: #0DCAF0;
-    color: #ffffff;
+    color: #0DCAF0;
 }
 
 /* Logout button */
