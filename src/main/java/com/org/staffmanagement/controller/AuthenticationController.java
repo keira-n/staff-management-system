@@ -2,6 +2,7 @@ package com.org.staffmanagement.controller;
 
 import com.org.staffmanagement.service.AuthenticationService;
 import com.org.staffmanagement.service.AuthenticationService.AuthResponse;
+import com.org.staffmanagement.service.AuthenticationService.ChangePasswordRequest;
 import com.org.staffmanagement.service.AuthenticationService.LoginRequest;
 import com.org.staffmanagement.service.AuthenticationService.RegisterRequest;
 
@@ -54,6 +55,23 @@ public class AuthenticationController {
             return ResponseEntity
                     .status(HttpStatus.UNAUTHORIZED)
                     .body(new ErrorResponse("Invalid login credentials"));
+        }
+    }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequest request
+    ) {
+        try {
+            AuthResponse response =
+                    authenticationService.changePassword(request);
+
+            return ResponseEntity.ok(response);
+
+        } catch (IllegalArgumentException exception) {
+            return ResponseEntity
+                    .badRequest()
+                    .body(new ErrorResponse(exception.getMessage()));
         }
     }
 

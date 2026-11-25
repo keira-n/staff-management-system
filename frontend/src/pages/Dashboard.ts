@@ -99,6 +99,69 @@ export async function renderDashboardPage(
         }
     }
 
+    function showTemporaryPassword(password: string): void {
+        const formContainer = contentContainer.querySelector<HTMLElement>(
+            '#staffFormContainer'
+        );
+
+        if (!formContainer) {
+            return;
+        }
+
+        const section = document.createElement('section');
+        section.className = 'form-section';
+
+        const heading = document.createElement('h2');
+        heading.textContent = 'Staff account created successfully';
+
+        const explanation = document.createElement('p');
+        explanation.textContent =
+            'Give this temporary password to the employee. They must change it when they first sign in.';
+
+        const passwordContainer = document.createElement('div');
+        passwordContainer.className = 'temporary-password';
+
+        const passwordLabel = document.createElement('p');
+        passwordLabel.textContent = 'Temporary password';
+
+        const passwordValue = document.createElement('strong');
+        passwordValue.textContent = password;
+
+        const copyButton = document.createElement('button');
+        copyButton.type = 'button';
+        copyButton.textContent = 'Copy password';
+
+        copyButton.addEventListener('click', async () => {
+            try {
+                await navigator.clipboard.writeText(password);
+                copyButton.textContent = 'Copied';
+            } catch (error) {
+                console.error(error);
+                alert('Unable to copy the password. Please copy it manually.');
+            }
+        });
+
+        passwordContainer.appendChild(passwordLabel);
+        passwordContainer.appendChild(passwordValue);
+        passwordContainer.appendChild(copyButton);
+
+        const warning = document.createElement('p');
+        warning.textContent =
+            'This password will not be shown again. Make sure the employee receives it before closing this page.';
+
+        section.appendChild(heading);
+        section.appendChild(explanation);
+        section.appendChild(passwordContainer);
+        section.appendChild(warning);
+
+        formContainer.appendChild(section);
+
+        section.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center'
+        });
+    }
+
     function renderStaffPage(): void {
         contentContainer.innerHTML = `
             <section class="staff-section">
@@ -152,13 +215,17 @@ export async function renderDashboardPage(
                     try {
                         if (editingStaff?.id) {
                             await updateStaff(editingStaff.id, staff);
+
+                            editingStaff = null;
+                            await loadStaff();
                         } else {
-                            await addStaff(staff);
+                            const result = await addStaff(staff);
+
+                            editingStaff = null;
+                            await loadStaff();
+
+                            showTemporaryPassword(result.temporaryPassword);
                         }
-
-                        editingStaff = null;
-                        await loadStaff();
-
                     } catch (error) {
                         console.error(error);
                         alert('Unable to save staff member.');

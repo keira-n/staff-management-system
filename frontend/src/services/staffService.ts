@@ -3,6 +3,11 @@ import { getToken } from './authService';
 
 const API_URL = 'http://localhost:8080/api/staff';
 
+export interface StaffCreationResponse {
+    staff: Staff;
+    temporaryPassword: string;
+}
+
 function getHeaders(json = false): HeadersInit {
     const token = getToken();
 
@@ -12,9 +17,11 @@ function getHeaders(json = false): HeadersInit {
     };
 }
 
-async function handleError(response: Response, fallback: string): Promise<never> {
+async function handleError(
+    response: Response,
+    fallback: string
+): Promise<never> {
     const message = await response.text();
-
     throw new Error(message || fallback);
 }
 
@@ -42,7 +49,9 @@ export async function getAllStaff(
     return response.json();
 }
 
-export async function addStaff(staff: Staff): Promise<Staff> {
+export async function addStaff(
+    staff: Staff
+): Promise<StaffCreationResponse> {
     const response = await fetch(API_URL, {
         method: 'POST',
         headers: getHeaders(true),

@@ -1,7 +1,6 @@
 package com.org.staffmanagement.configs;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
-import com.org.staffmanagement.configs.TenantContextFilter;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -99,6 +98,7 @@ public class SecurityConfig {
                         )
                 )
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers(
                                 HttpMethod.POST,
                                 "/api/auth/register",
@@ -116,6 +116,10 @@ public class SecurityConfig {
                 .addFilterAfter(
                         new TenantContextFilter(),
                         BearerTokenAuthenticationFilter.class
+                )
+                .addFilterAfter(
+                        new FirstLoginPasswordChangeFilter(),
+                        TenantContextFilter.class
                 );
 
         return http.build();

@@ -9,6 +9,7 @@ export interface AuthResponse {
     organisationId: string;
     organisationName: string;
     expiresAt: string;
+    mustChangePassword: boolean;
 }
 
 export interface RegisterRequest {
@@ -22,6 +23,11 @@ export interface RegisterRequest {
 export interface LoginRequest {
     email: string;
     password: string;
+}
+
+export interface ChangePasswordRequest {
+    currentPassword: string;
+    newPassword: string;
 }
 
 async function getErrorMessage(
@@ -92,6 +98,41 @@ export async function login(
     return result;
 }
 
+export async function changePassword(
+    data: ChangePasswordRequest
+): Promise<AuthResponse> {
+    const token = getToken();
+
+    if (!token) {
+        throw new Error('You must be logged in to change your password.');
+    }
+
+    const response = await fetch(`${API_URL}/change-password`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(data)
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            await getErrorMessage(
+                response,
+                'Password change failed.'
+            )
+        );
+    }
+
+    const result: AuthResponse = await response.json();
+
+    // Replace the temporary-password token with the new token
+    saveSession(result);
+
+    return result;
+}
+
 export function saveSession(auth: AuthResponse): void {
     localStorage.setItem('staffManagementToken', auth.token);
 
@@ -101,7 +142,8 @@ export function saveSession(auth: AuthResponse): void {
         role: auth.role,
         department: auth.department,
         organisationId: auth.organisationId,
-        organisationName: auth.organisationName
+        organisationName: auth.organisationName,
+        mustChangePassword: auth.mustChangePassword
     }));
 }
 
@@ -131,4 +173,8 @@ export function logout(): void {
 
 export function isAuthenticated(): boolean {
     return getToken() !== null;
+}
+
+export function mustChangePassword(): boolean {
+    return getCurrentUser()?.mustChangePassword === true;
 }
