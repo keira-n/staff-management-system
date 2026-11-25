@@ -19,8 +19,10 @@ public class UserAccount {
     private String organisationId;
     private String department;
     private String role;
+    private String staffId;
 
     private boolean enabled = true;
+    private boolean mustChangePassword = false;
 
     public UserAccount() {
     }
@@ -107,11 +109,27 @@ public class UserAccount {
         this.role = role;
     }
 
+    public String getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(String staffId) {
+        this.staffId = staffId;
+    }
+
     public boolean isEnabled() {
         return enabled;
     }
 
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
     }
 }

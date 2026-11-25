@@ -11,6 +11,7 @@ public class Staff {
 
     @Id
     private String id;
+
     // Personal Information
     private String name;
     private String email;
@@ -23,6 +24,9 @@ public class Staff {
     private String employeeCode;
     private String department;
     private String position;
+
+    // Linked login account
+    private String userAccountId;
 
     // Flexible industry-specific fields
     private Map<String, Object> customFields = new HashMap<>();
@@ -49,7 +53,7 @@ public class Staff {
     public String getEmail() {
         return email;
     }
-    
+
     public String getPhone() {
         return phone;
     }
@@ -124,5 +128,13 @@ public class Staff {
 
     public void setCustomFields(Map<String, Object> customFields) {
         this.customFields = customFields;
+    }
+
+    public String getUserAccountId() {
+        return userAccountId;
+    }
+
+    public void setUserAccountId(String userAccountId) {
+        this.userAccountId = userAccountId;
     }
 }
