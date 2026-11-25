@@ -77,23 +77,45 @@ A shared application with isolated organisation databases.
 MongoDB Atlas
 │
 ├── staff_management_master
-│   └── organisations
+│   ├── organisations
+│   └── user_accounts
 │
-├── staff_org_001
-│   ├── staff
-│   ├── user_accounts
+├── staff_org_<organisation-id>
+│   ├── Staff
+│   ├── users
 │   ├── leave_requests
 │   └── leave_balances
 │
-└── staff_org_002
-    └── ...
+├── staff_org_<organisation-id>
+│   ├── Staff
+│   ├── users
+│   ├── leave_requests
+│   └── leave_balances
+│
+└── ...
 ```
+### Master Database
+
+The master database stores central organisation and account directory information.
+
+organisations – Organisation details, database names and provisioning status.
+
+user_accounts – Central account directory containing normalised email addresses, organisation references and tenant account references.
+
+The central account directory enforces globally unique, case-insensitive email addresses across organisations.
+
+### Organisation Databases
+
+Each organisation has its own database containing its operational data, including staff records, user accounts and leave information.
+
+Organisation data is kept separate.
 > [!NOTE]
 > Need improvement on security. Implement it yourself or wait for me to have free time again.
 
 ## Roadmap
 Things I want to add or improve in the future.
 
+- [x] ~~Auto-generated User Account~~
 - [ ] Better Database Access Security
 - [ ] Payroll Management
 - [ ] Performance Tracking
