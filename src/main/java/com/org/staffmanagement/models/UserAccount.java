@@ -1,22 +1,21 @@
 package com.org.staffmanagement.models;
 
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.Locale;
+
 @Document(collection = "users")
-@CompoundIndex(
-        name = "email_organisation_unique",
-        def = "{'email': 1, 'organisationId': 1}",
-        unique = true
-)
 public class UserAccount {
+
     @Id
     private String id;
 
+    @Indexed(name = "email_unique", unique = true)
     private String email;
-    private String passwordHash;
 
+    private String passwordHash;
     private String organisationId;
     private String department;
     private String role;
@@ -32,7 +31,7 @@ public class UserAccount {
             String organisationId,
             String role
     ) {
-        this.email = email;
+        this.email = normaliseEmail(email);
         this.passwordHash = passwordHash;
         this.organisationId = organisationId;
         this.role = role;
@@ -46,12 +45,18 @@ public class UserAccount {
             String department,
             String role
     ) {
-        this.email = email;
+        this.email = normaliseEmail(email);
         this.passwordHash = passwordHash;
         this.organisationId = organisationId;
         this.department = department;
         this.role = role;
         this.enabled = true;
+    }
+
+    private String normaliseEmail(String email) {
+        return email == null
+                ? null
+                : email.trim().toLowerCase(Locale.ROOT);
     }
 
     public String getId() {
@@ -67,7 +72,7 @@ public class UserAccount {
     }
 
     public void setEmail(String email) {
-        this.email = email;
+        this.email = normaliseEmail(email);
     }
 
     public String getPasswordHash() {

@@ -24,7 +24,7 @@ export function renderAuthPage(
                         <p>
                             ${registering
             ? 'Register your organisation to get started'
-            : 'Sign in to your organisation'}
+            : 'Sign in using your work email address'}
                         </p>
                     </header>
 
@@ -32,7 +32,7 @@ export function renderAuthPage(
                         <h2>
                             ${registering
             ? 'Register Organisation'
-            : 'Organisation Login'}
+            : 'Login'}
                         </h2>
 
                         <form id="authForm">
@@ -58,22 +58,13 @@ export function renderAuthPage(
                                     placeholder="Organisation Description (optional)"
                                     rows="3"
                                 ></textarea>
-                            ` : `
-                                <input
-                                    name="organisationId"
-                                    placeholder="Organisation ID"
-                                    required
-                                >
-
-                                <small>
-                                    Enter the Organisation ID provided during registration.
-                                </small>
-                            `}
+                            ` : ''}
 
                             <input
                                 name="email"
                                 type="email"
-                                placeholder="Email Address"
+                                placeholder="Work Email Address"
+                                autocomplete="email"
                                 required
                             >
 
@@ -81,13 +72,18 @@ export function renderAuthPage(
                                 name="password"
                                 type="password"
                                 placeholder="Password"
-                                minlength="8"
+                                autocomplete="${registering
+            ? 'new-password'
+            : 'current-password'}"
+                                ${registering ? 'minlength="8"' : ''}
                                 required
                             >
 
                             <div class="form-buttons">
                                 <button type="submit">
-                                    ${registering ? 'Register Organisation' : 'Login'}
+                                    ${registering
+            ? 'Register Organisation'
+            : 'Login'}
                                 </button>
 
                                 <button type="button" id="switchAuth">
@@ -127,7 +123,9 @@ export function renderAuthPage(
                     document.querySelector<HTMLElement>('#authError');
 
                 const resultElement =
-                    document.querySelector<HTMLElement>('#registrationResult');
+                    document.querySelector<HTMLElement>(
+                        '#registrationResult'
+                    );
 
                 const submitButton =
                     form.querySelector<HTMLButtonElement>(
@@ -141,6 +139,10 @@ export function renderAuthPage(
 
                 if (errorElement) {
                     errorElement.textContent = '';
+                }
+
+                if (resultElement) {
+                    resultElement.innerHTML = '';
                 }
 
                 try {
@@ -164,51 +166,35 @@ export function renderAuthPage(
                         });
 
                         if (resultElement) {
-                            resultElement.innerHTML = `
-                                <div class="form-section">
-                                    <h3>Organisation Registered Successfully</h3>
-                                    <p>Your Organisation ID is:</p>
-                                    <strong id="newOrganisationId">
-                                        ${result.organisationId}
-                                    </strong>
-                                    <button type="button" id="copyOrganisationId">
-                                        Copy Organisation ID
-                                    </button>
-                                    <p>
-                                        Keep this ID safe. You will need it whenever
-                                        you log in.
-                                    </p>
-                                </div>
-                            `;
+                            const heading =
+                                document.createElement('h3');
 
-                            document.querySelector('#copyOrganisationId')
-                                ?.addEventListener('click', async () => {
-                                    try {
-                                        await navigator.clipboard.writeText(
-                                            result.organisationId
-                                        );
+                            heading.textContent =
+                                'Organisation Registered Successfully';
 
-                                        const button =
-                                            document.querySelector<HTMLButtonElement>(
-                                                '#copyOrganisationId'
-                                            );
+                            const message =
+                                document.createElement('p');
 
-                                        if (button) {
-                                            button.textContent = 'Copied!';
-                                        }
-                                    } catch {
-                                        if (errorElement) {
-                                            errorElement.textContent =
-                                                'Unable to copy the ID. Please copy it manually.';
-                                        }
-                                    }
-                                });
+                            message.textContent =
+                                `Welcome to Staff Management, ${result.organisationName}.`;
+
+                            const details =
+                                document.createElement('p');
+
+                            details.textContent =
+                                'Your administrator account has been created. You can now access your organisation dashboard.';
+
+                            resultElement.append(
+                                heading,
+                                message,
+                                details
+                            );
                         }
+
+                        options.onAuthenticated();
+
                     } else {
                         await login({
-                            organisationId: String(
-                                formData.get('organisationId')
-                            ).trim(),
                             email: String(
                                 formData.get('email')
                             ).trim(),

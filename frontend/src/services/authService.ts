@@ -20,9 +20,25 @@ export interface RegisterRequest {
 }
 
 export interface LoginRequest {
-    organisationId: string;
     email: string;
     password: string;
+}
+
+async function getErrorMessage(
+    response: Response,
+    fallback: string
+): Promise<string> {
+    try {
+        const result = await response.json();
+
+        if (result.message) {
+            return result.message;
+        }
+    } catch {
+        // Response was not JSON
+    }
+
+    return fallback;
 }
 
 export async function registerOrganisation(
@@ -37,10 +53,13 @@ export async function registerOrganisation(
     });
 
     if (!response.ok) {
-        throw new Error(await response.text() || 'Registration failed.');
+        throw new Error(
+            await getErrorMessage(response, 'Registration failed.')
+        );
     }
 
     const result: AuthResponse = await response.json();
+
     saveSession(result);
 
     return result;
@@ -58,10 +77,16 @@ export async function login(
     });
 
     if (!response.ok) {
-        throw new Error('Invalid organisation ID, email or password.');
+        throw new Error(
+            await getErrorMessage(
+                response,
+                'Invalid email or password.'
+            )
+        );
     }
 
     const result: AuthResponse = await response.json();
+
     saveSession(result);
 
     return result;

@@ -1,10 +1,13 @@
 package com.org.staffmanagement.service;
 
 import com.mongodb.client.MongoClient;
+import com.org.staffmanagement.models.CentralUserAccount;
 import com.org.staffmanagement.models.Organisation;
 import com.org.staffmanagement.models.UserAccount;
+import com.org.staffmanagement.repository.master.CentralUserAccountRepository;
 import com.org.staffmanagement.repository.master.OrganisationRepository;
 
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
@@ -25,17 +28,20 @@ public class AuthenticationService {
 
     private final MongoClient mongoClient;
     private final OrganisationRepository organisationRepository;
+    private final CentralUserAccountRepository centralUserAccountRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtEncoder jwtEncoder;
 
     public AuthenticationService(
             MongoClient mongoClient,
             OrganisationRepository organisationRepository,
+            CentralUserAccountRepository centralUserAccountRepository,
             PasswordEncoder passwordEncoder,
             JwtEncoder jwtEncoder
     ) {
         this.mongoClient = mongoClient;
         this.organisationRepository = organisationRepository;
+        this.centralUserAccountRepository = centralUserAccountRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtEncoder = jwtEncoder;
     }
@@ -59,9 +65,14 @@ public class AuthenticationService {
 
         validateCredentials(request.email(), request.password());
 
-        String email = request.email()
-                .trim()
-                .toLowerCase(Locale.ROOT);
+        String email = normaliseEmail(request.email());
+
+        // Check whether the email is already registered globally
+        if (centralUserAccountRepository.existsByNormalisedEmail(email)) {
+            throw new IllegalArgumentException(
+                    "This email address is already registered"
+            );
+        }
 
         Organisation organisation = new Organisation(
                 request.organisationName().trim(),
@@ -69,11 +80,9 @@ public class AuthenticationService {
                 request.description()
         );
 
-        // Save organisation in the master database
         Organisation savedOrganisation =
                 organisationRepository.save(organisation);
 
-        // Assign a unique database name
         String databaseName =
                 "staff_org_" + savedOrganisation.getId();
 
@@ -82,15 +91,14 @@ public class AuthenticationService {
 
         organisationRepository.save(savedOrganisation);
 
-        UserAccount savedUser;
+        MongoTemplate tenantTemplate =
+                new MongoTemplate(mongoClient, databaseName);
+
+        UserAccount savedUser = null;
 
         try {
 
-            // Connect directly to the new organisation database
-            MongoTemplate tenantTemplate =
-                    new MongoTemplate(mongoClient, databaseName);
-
-            // Create the initial administrator account
+            // Create the initial administrator in the tenant database
             UserAccount admin = new UserAccount(
                     email,
                     passwordEncoder.encode(request.password()),
@@ -98,13 +106,41 @@ public class AuthenticationService {
                     "ADMIN"
             );
 
-            // Saving the account creates the tenant database
             savedUser = tenantTemplate.save(admin);
 
-            // Activate the database after successful provisioning
-            savedOrganisation.setDatabaseStatus("ACTIVE");
+            // Register the account in the central master database
+            CentralUserAccount centralAccount =
+                    new CentralUserAccount(
+                            email,
+                            savedOrganisation.getId(),
+                            databaseName,
+                            savedUser.getId()
+                    );
 
+            centralUserAccountRepository.save(centralAccount);
+
+            // Activate the organisation after successful provisioning
+            savedOrganisation.setDatabaseStatus("ACTIVE");
             organisationRepository.save(savedOrganisation);
+
+        } catch (DuplicateKeyException exception) {
+
+            // Remove the tenant account if central registration failed
+            if (savedUser != null) {
+                tenantTemplate.remove(
+                        Query.query(
+                                Criteria.where("_id").is(savedUser.getId())
+                        ),
+                        UserAccount.class
+                );
+            }
+
+            savedOrganisation.setDatabaseStatus("FAILED");
+            organisationRepository.save(savedOrganisation);
+
+            throw new IllegalArgumentException(
+                    "This email address is already registered"
+            );
 
         } catch (RuntimeException exception) {
 
@@ -117,74 +153,83 @@ public class AuthenticationService {
             );
         }
 
-        // Generate JWT only after successful provisioning
         return createAuthResponse(savedUser, savedOrganisation);
     }
 
-    // Authenticate a user against their organisation database
+    // Authenticate using the central account directory
     public AuthResponse login(LoginRequest request) {
-
-        if (request.organisationId() == null ||
-                request.organisationId().isBlank()) {
-            throw new IllegalArgumentException(
-                    "Organisation ID is required"
-            );
-        }
 
         if (request.email() == null ||
                 request.email().isBlank() ||
-                request.password() == null) {
+                request.password() == null ||
+                request.password().isBlank()) {
             throw new IllegalArgumentException(
                     "Email and password are required"
             );
         }
 
-        String email = request.email()
-                .trim()
-                .toLowerCase(Locale.ROOT);
+        String email = normaliseEmail(request.email());
 
-        // Find organisation in the master database
-        Organisation organisation = organisationRepository
-                .findById(request.organisationId())
-                .orElseThrow(() ->
+        // Find the account in the central master database
+        CentralUserAccount centralAccount =
+                centralUserAccountRepository
+                        .findByNormalisedEmail(email)
+                        .orElseThrow(() ->
+                                new IllegalArgumentException(
+                                        "Invalid login credentials"
+                                )
+                        );
+
+        if (!centralAccount.isEnabled()) {
+            throw new IllegalArgumentException(
+                    "Invalid login credentials"
+            );
+        }
+
+        // Identify the employee's organisation
+        Organisation organisation =
+                organisationRepository.findById(
+                        centralAccount.getOrganisationId()
+                ).orElseThrow(() ->
                         new IllegalArgumentException(
                                 "Invalid login credentials"
                         )
                 );
 
+        // Ensure the organisation is active
         if (!"ACTIVE".equalsIgnoreCase(
                 organisation.getDatabaseStatus()
         )) {
             throw new IllegalArgumentException(
-                    "Organisation database is not active"
+                    "Invalid login credentials"
             );
         }
 
+        // Verify that the directory points to the correct database
         if (organisation.getDatabaseName() == null ||
-                organisation.getDatabaseName().isBlank()) {
-            throw new IllegalStateException(
-                    "Organisation database is not configured"
+                !organisation.getDatabaseName().equals(
+                        centralAccount.getDatabaseName()
+                )) {
+            throw new IllegalArgumentException(
+                    "Invalid login credentials"
             );
         }
 
-        // Connect to the organisation's dedicated database
+        // Connect only to the employee's organisation database
         MongoTemplate tenantTemplate = new MongoTemplate(
                 mongoClient,
-                organisation.getDatabaseName()
+                centralAccount.getDatabaseName()
         );
 
-        // Find the user inside that organisation's database
-        Query query = Query.query(
-                Criteria.where("email").is(email)
-                        .and("organisationId").is(organisation.getId())
-        );
-
-        UserAccount user = tenantTemplate.findOne(
-                query,
+        // Retrieve the exact account identified by the directory
+        UserAccount user = tenantTemplate.findById(
+                centralAccount.getUserId(),
                 UserAccount.class
         );
 
         if (user == null ||
+                !email.equals(normaliseEmail(user.getEmail())) ||
+                !organisation.getId().equals(user.getOrganisationId()) ||
                 !user.isEnabled() ||
                 !passwordEncoder.matches(
                         request.password(),
@@ -196,6 +241,11 @@ public class AuthenticationService {
         }
 
         return createAuthResponse(user, organisation);
+    }
+
+    // Normalise email addresses consistently
+    private String normaliseEmail(String email) {
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 
     // Generate authentication response and JWT
@@ -271,7 +321,6 @@ public class AuthenticationService {
     }
 
     public record LoginRequest(
-            String organisationId,
             String email,
             String password
     ) {
