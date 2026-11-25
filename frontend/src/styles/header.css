@@ -1,0 +1,49 @@
+header {
+    padding: 25px 50px;
+    margin-bottom: 0;
+    background-color: #161b22;
+    border-bottom: 1px solid #3b434d;
+}
+
+header h1 {
+    color: #60a5fa;
+    font-size: 32px;
+    margin-bottom: 10px;
+}
+
+header p {
+    color: #c9d1d9;
+    font-size: 15px;
+    margin: 6px 0;
+}
+
+header .form-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+header .form-buttons button {
+    min-width: 140px;
+}
+
+/* Responsive header */
+
+@media (max-width: 600px) {
+    header {
+        padding: 25px 16px;
+    }
+
+    header h1 {
+        font-size: 26px;
+    }
+
+    header .form-buttons {
+        flex-direction: column;
+    }
+
+    header .form-buttons button {
+        width: 100%;
+    }
+}

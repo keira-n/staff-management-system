@@ -1,0 +1,261 @@
+.leave-section {
+    min-width: 0;
+    padding: 25px;
+    margin-bottom: 35px;
+    background-color: #161b22;
+    border: 1px solid #3b434d;
+}
+
+.leave-section h1 {
+    color: #60a5fa;
+}
+
+/* Leave navigation */
+
+.leave-navigation {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 25px 0;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #3b434d;
+}
+
+.leave-navigation button {
+    min-width: 130px;
+}
+
+/* Leave request form */
+
+.leave-section .form-container {
+    padding: 20px;
+    margin-top: 20px;
+    background-color: #0d1117;
+    border: 1px solid #3b434d;
+}
+
+.leave-section .form-container form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.leave-section .form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #c9d1d9;
+    font-size: 14px;
+}
+
+.leave-section .form-group textarea {
+    min-height: 110px;
+}
+
+.leave-section .form-group:has(textarea),
+.leave-section #leave-form-error {
+    grid-column: 1 / -1;
+}
+
+/* Leave request list */
+
+.leave-list-container {
+    margin-top: 20px;
+}
+
+.leave-request-list {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.leave-request-card {
+    padding: 20px;
+    background-color: #0d1117;
+    border: 1px solid #3b434d;
+}
+
+.leave-request-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 15px;
+}
+
+.leave-request-header h3 {
+    margin: 0;
+    color: #60a5fa;
+    font-size: 18px;
+}
+
+.leave-request-card p {
+    margin: 10px 0;
+    font-size: 14px;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+}
+
+/* Leave status */
+
+.leave-status {
+    display: inline-block;
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: bold;
+    border: 1px solid #3b434d;
+}
+
+.leave-status.pending {
+    color: #e3b341;
+    border-color: #9e6a03;
+    background-color: #2d2412;
+}
+
+.leave-status.approved {
+    color: #3fb950;
+    border-color: #238636;
+    background-color: #12251a;
+}
+
+.leave-status.rejected {
+    color: #f85149;
+    border-color: #da3633;
+    background-color: #321b1e;
+}
+
+/* Review actions */
+
+.leave-review-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px solid #3b434d;
+}
+
+.leave-review-actions textarea {
+    min-height: 75px;
+    grid-column: auto;
+}
+
+.approve-leave-button {
+    color: #3fb950;
+}
+
+.approve-leave-button:hover {
+    background-color: #12251a;
+    border-color: #238636;
+    color: #3fb950;
+}
+
+.reject-leave-button {
+    color: #f85149;
+}
+
+.reject-leave-button:hover {
+    background-color: #321b1e;
+    border-color: #da3633;
+    color: #f85149;
+}
+
+/* Leave balance */
+
+.leave-balance-container {
+    margin-top: 20px;
+}
+
+.leave-balance-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.leave-balance-item {
+    padding: 20px;
+    background-color: #0d1117;
+    border: 1px solid #3b434d;
+}
+
+.leave-balance-item h3 {
+    margin-bottom: 20px;
+    color: #60a5fa;
+    font-size: 18px;
+}
+
+.leave-balance-numbers {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 10px;
+}
+
+.leave-balance-numbers div {
+    display: flex;
+    flex-direction: column;
+    gap: 7px;
+}
+
+.leave-balance-numbers strong {
+    color: #60a5fa;
+    font-size: 25px;
+}
+
+.leave-balance-numbers span {
+    color: #8b949e;
+    font-size: 12px;
+}
+
+/* Leave progress bar */
+
+.leave-progress-track {
+    height: 9px;
+    margin-top: 22px;
+    overflow: hidden;
+    background-color: #30363d;
+    border-radius: 5px;
+}
+
+.leave-progress-fill {
+    height: 100%;
+    background-color: #58a6ff;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+/* Responsive layout */
+
+@media (max-width: 600px) {
+    .leave-section {
+        padding: 18px;
+    }
+
+    .leave-navigation {
+        flex-direction: column;
+    }
+
+    .leave-navigation button {
+        width: 100%;
+    }
+
+    .leave-section .form-container form {
+        grid-template-columns: 1fr;
+    }
+
+    .leave-section .form-group:has(textarea),
+    .leave-section #leave-form-error {
+        grid-column: auto;
+    }
+
+    .leave-balance-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .leave-balance-numbers strong {
+        font-size: 21px;
+    }
+
+    .leave-request-card {
+        padding: 15px;
+    }
+}

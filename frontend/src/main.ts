@@ -1,10 +1,9 @@
 import './styles/global.css';
-
-import './components/auth/auth.css';
-import './components/layout/header.css';
-import './components/staff/staff.css';
-import './components/organisations/organisations.css';
-import './components/leave/leave.css';
+import './styles/auth.css';
+import './styles/header.css';
+import './styles/staff.css';
+import './styles/organisations.css';
+import './styles/leave.css';
 
 import { isAuthenticated } from './services/authService';
 

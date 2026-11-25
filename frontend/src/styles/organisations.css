@@ -1,0 +1,88 @@
+/* Organisation settings */
+
+.organisation-section,
+.organisation-settings {
+    padding: 25px;
+    margin-bottom: 35px;
+    background-color: #161b22;
+    border: 1px solid #3b434d;
+}
+
+.organisation-section h2,
+.organisation-settings h2 {
+    color: #60a5fa;
+}
+
+/* Organisation forms */
+
+.organisation-section form,
+.organisation-settings form {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 15px;
+}
+
+.organisation-section label,
+.organisation-settings label {
+    display: block;
+    margin-bottom: 8px;
+    color: #c9d1d9;
+    font-size: 14px;
+}
+
+/* Organisation cards */
+
+.organisation-card {
+    padding: 20px;
+    margin-bottom: 15px;
+    background-color: #0d1117;
+    border: 1px solid #3b434d;
+}
+
+.organisation-card h3 {
+    color: #60a5fa;
+    margin-bottom: 10px;
+}
+
+.organisation-card p {
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+/* Database status */
+
+.database-status {
+    display: inline-block;
+    padding: 5px 10px;
+    border: 1px solid #3b434d;
+    font-size: 12px;
+}
+
+.database-status.active {
+    color: #3fb950;
+    border-color: #238636;
+}
+
+.database-status.provisioning {
+    color: #e3b341;
+    border-color: #9e6a03;
+}
+
+.database-status.failed {
+    color: #f85149;
+    border-color: #da3633;
+}
+
+/* Responsive */
+
+@media (max-width: 600px) {
+    .organisation-section,
+    .organisation-settings {
+        padding: 18px;
+    }
+
+    .organisation-section form,
+    .organisation-settings form {
+        grid-template-columns: 1fr;
+    }
+}
